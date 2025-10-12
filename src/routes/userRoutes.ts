@@ -1,6 +1,6 @@
 import {
   userRegisterHandler,
-  userLoginHandler,
+  userLoginHandler
 } from "../controllers/userController";
 import express from "express";
 

@@ -4,7 +4,6 @@ import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import bcrypt from "bcrypt";
 
-
 // register
 
 const userRegisterHandler = async (req: Request, _res: Response) => {
@@ -30,11 +29,10 @@ const userRegisterHandler = async (req: Request, _res: Response) => {
     password: hashedPassword
   });
 
-  // Send response
   throw new ApiResponse(201, newUser, "A new user has been created");
 };
 
-const userLoginHandler = async (req: Request, res: Response) => {
+export const userLoginHandler = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -46,19 +44,24 @@ const userLoginHandler = async (req: Request, res: Response) => {
     throw new ApiError(400, "User does not exist");
   }
 
-  const isPasswordCorrect = await bcrypt.compare(
-    password,
-    existedUser.password
-  );
+  const isPasswordCorrect = await bcrypt.compare(password, existedUser.password);
   if (!isPasswordCorrect) {
     throw new ApiError(401, "Invalid password");
   }
 
-  // If you want to generate JWT:
-  // const token = jwt.sign({ id: existedUser._id }, config.jwt_secret as string, { expiresIn: "7d" });
+  // ✅ Instance method call
+  const token = existedUser.generateJwtToken();
 
-  return new ApiResponse(200, existedUser, "User logged in successfully").send(
-    res
-  );
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 1000 // 1 hour
+  });
+
+  console.log(token);
+
+  return new ApiResponse(200, token, "User logged in successfully").send(res);
 };
-export { userLoginHandler, userRegisterHandler };
+
+const userLogoutHandler = async () => {};
+
+export { userRegisterHandler, userLogoutHandler };

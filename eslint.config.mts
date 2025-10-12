@@ -19,10 +19,11 @@ export default defineConfig([
           caughtErrorsIgnorePattern: "^_",
           destructuredArrayIgnorePattern: "^_",
           varsIgnorePattern: "^_",
-          ignoreRestSiblings: true,
-        },
+          ignoreRestSiblings: true
+        }
       ],
-    },
+      "@typescript-eslint/no-this-alias": "off"
+    }
   },
-  tseslint.configs.recommended,
+  tseslint.configs.recommended
 ]);
