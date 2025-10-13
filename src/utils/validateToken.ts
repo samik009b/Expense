@@ -1,31 +1,43 @@
-import jwt from "jsonwebtoken";
-import _ApiResponse from "./ApiResponse";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import ApiError from "./ApiError";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { config } from "../config";
 
-const validateToken = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-) => {
-  const fromCookie = req.cookies?.token;
-  const fromHeader = req.headers.Cookie;
-  const token = fromCookie || fromHeader;
+interface TokenPayload extends JwtPayload {
+  userId: string;
+  email?: string;
+}
 
-  if (!token) {
-    throw new ApiError(401, "token not found");
-  }
-
-  if (!config.jwt_secret) {
-    throw new ApiError(401, "jwt not defined in config");
-  }
-
+const validateToken = (req: Request, _res: Response, next: NextFunction) => {
   try {
-    const _verified = jwt.verify(token, config.jwt_secret);
+    let token: string | undefined;
+
+    // ✅ Prefer Authorization header
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+
+    // ✅ Fallback to cookie if header not present
+    if (!token && req.cookies?.token) {
+      token = req.cookies.token;
+    }
+
+    if (!token) throw new ApiError(401, "Authorization header missing or malformed");
+    if (!config.jwt_secret) throw new ApiError(500, "JWT secret not defined");
+
+    const decoded = jwt.verify(token, config.jwt_secret) as TokenPayload;
+    if (!decoded.userId) throw new ApiError(401, "Invalid token payload");
+
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email
+    };
+
     next();
-  } catch (_error) {
-    throw new ApiError(401, "token is invalid or expired");
+  } catch (err) {
+    console.error("JWT Validation Error:", err);
+    throw new ApiError(401, "Token is invalid or expired");
   }
 };
 

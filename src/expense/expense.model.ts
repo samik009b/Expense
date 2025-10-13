@@ -1,11 +1,7 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
-import { expenseType } from "../utils/schemaValidator";
+import mongoose, { Schema } from "mongoose";
+import { IExpense } from "../types";
 
-interface ExpenseDocument extends Omit<expenseType, "user">, Document {
-  user: Types.ObjectId;
-}
-
-const expenseSchema = new Schema<ExpenseDocument>(
+const expenseSchema = new Schema<IExpense>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -51,7 +47,4 @@ const expenseSchema = new Schema<ExpenseDocument>(
   { timestamps: true }
 );
 
-export const ExpenseModel = mongoose.model<ExpenseDocument>(
-  "Expense",
-  expenseSchema
-);
+export const Expense = mongoose.model<IExpense>("Expense", expenseSchema);

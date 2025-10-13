@@ -2,11 +2,9 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { config } from "./config";
-import { userRouter } from "./routes/userRoutes";
-import {
-  globalErrorHandler,
-  globalResponseHandler
-} from "./utils/globalhandler";
+import { userRouter } from "./client/user.routes";
+import { globalErrorHandler, globalResponseHandler } from "./utils/globalhandler";
+import { expenseRouter } from "./expense/expense.routes";
 
 const app = express();
 
@@ -21,10 +19,18 @@ app.use(
   })
 );
 
-// routes
+/**
+ * @routes user
+ */
 app.use("/user", userRouter);
+
+/**
+ * @routes expense
+ */
+app.use("/expense", expenseRouter);
 
 // custom middlewares
 app.use(globalResponseHandler);
 app.use(globalErrorHandler);
+
 export default app;
