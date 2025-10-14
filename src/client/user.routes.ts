@@ -4,8 +4,8 @@ import validateToken from "../utils/validateToken";
 
 const router = Router();
 
+router.get("/profile", validateToken, userProfileHandler);
 router.post("/register", userRegisterHandler);
 router.post("/login", userLoginHandler);
-router.get("/profile", validateToken, userProfileHandler);
 
 export const userRouter = router;
