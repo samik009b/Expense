@@ -18,7 +18,6 @@ const getAllExpenses = async (req: Request, res: Response, next: NextFunction) =
         const { userId, email } = req.user as userData;
         if (!userId || !email) throw new ApiError(400, "token is invalid or expired");
 
-        // Convert userId to ObjectId if your schema defines `user` as ObjectId
         const allExpenses = await Expense.find({ user: new mongoose.Types.ObjectId(userId) })
             .lean()
             .exec();
