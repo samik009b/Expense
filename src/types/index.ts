@@ -7,6 +7,7 @@ interface IUser extends Document {
     name: string;
     email: string;
     password: string;
+    userId: Types.ObjectId;
 }
 
 /**
@@ -24,8 +25,26 @@ interface IExpense extends Document {
 }
 
 /**
- * @type userData
-*/
-type userData = Pick<IUser, "name" | "email" | "password">;
+ * @type config
+ */
+interface IConfig {
+    port: string | undefined;
+    mongo_url: string | undefined;
+    cors_origin: string | undefined;
+    jwt_secret: string | undefined;
+    refresh_token_secret: string | undefined;
+    access_token_secret: string | undefined;
+    refresh_token_expiry: string | undefined;
+    access_token_expiry: string | undefined;
+}
 
-export type { IUser, IExpense, userData };
+/**
+ * @type userData
+ */
+type userData = Pick<IUser, "name" | "email" | "password" | "userId">;
+type expenseData = Pick<
+    IExpense,
+    "health" | "leisure" | "utilities" | "clothing" | "electronics" | "grocery"
+>;
+
+export type { IUser, IExpense, userData, expenseData, IConfig };

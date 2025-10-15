@@ -12,22 +12,20 @@ const validateToken = (req: Request, _res: Response, next: NextFunction) => {
     try {
         let token: string | undefined;
 
-        // ✅ Prefer Authorization header
         const authHeader = req.headers.authorization;
         if (authHeader && authHeader.startsWith("Bearer ")) {
             token = authHeader.split(" ")[1];
         }
 
-        // ✅ Fallback to cookie if header not present
         if (!token && req.cookies?.token) {
             token = req.cookies.token;
         }
 
-        if (!token) throw new ApiError(401, "Authorization header missing or malformed");
-        if (!config.jwt_secret) throw new ApiError(500, "JWT secret not defined");
+        if (!token) throw new ApiError(401, "authorization header missing or malformed");
+        if (!config.jwt_secret) throw new ApiError(500, "jwt secret not defined");
 
         const decoded = jwt.verify(token, config.jwt_secret) as TokenPayload;
-        if (!decoded.userId) throw new ApiError(401, "Invalid token payload");
+        if (!decoded.userId) throw new ApiError(401, "invalid token payload");
 
         req.user = {
             userId: decoded.userId,
@@ -36,8 +34,8 @@ const validateToken = (req: Request, _res: Response, next: NextFunction) => {
 
         next();
     } catch (err) {
-        console.error("JWT Validation Error:", err);
-        throw new ApiError(401, "Token is invalid or expired");
+        console.error("jwt validation Error:", err);
+        throw new ApiError(401, "token is invalid or expired");
     }
 };
 

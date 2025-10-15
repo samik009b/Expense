@@ -1,12 +1,12 @@
 import "express";
-import User from "../client/user.model";
+import User from "../models/user.model";
 
 declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
+    namespace Express {
+        interface Request {
+            user?: User;
+        }
     }
-  }
 }
 
 export {};

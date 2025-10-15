@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { userRegisterHandler, userLoginHandler, userProfileHandler } from "./user.controller";
+import {
+    userRegisterHandler,
+    userLoginHandler,
+    userProfileHandler
+} from "../controllers/user.controller";
 import validateToken from "../utils/validateToken";
 
 const router = Router();
