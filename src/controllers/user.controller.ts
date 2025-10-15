@@ -21,7 +21,6 @@ const userLoginHandler = async (req: Request, res: Response) => {
 
     const { accessToken, refreshToken } = existedUser.generateAccessAndRefreshToken();
 
-    // Set access token in cookie for auth
     res.cookie("token", accessToken, {
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 7,
